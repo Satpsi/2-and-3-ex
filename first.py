@@ -1,33 +1,35 @@
 import sys
 import random
-from PyQt6 import QtWidgets, uic
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt6.QtGui import QPainter, QColor
-from PyQt6.QtWidgets import QMainWindow
 
 
-class MainWindow(QMainWindow):
+class CircleApp(QWidget):
     def __init__(self):
         super().__init__()
-        uic.loadUi("UI.ui", self)
-        self.pushButton.clicked.connect(self.repaint)
+        self.setWindowTitle("Random Circles")
+        self.setGeometry(100, 100, 400, 400)
+        self.button = QPushButton("Draw Circle", self)
+        self.button.setGeometry(150, 350, 100, 30)
+        self.button.clicked.connect(self.update)
         self.circles = []
 
     def paintEvent(self, event):
         qp = QPainter(self)
-        for circle in self.circles:
-            qp.setBrush(QColor(255, 255, 0))
-            qp.drawEllipse(*circle)
+        for x, y, size, color in self.circles:
+            qp.setBrush(QColor(*color))
+            qp.drawEllipse(x, y, size, size)
 
-    def repaint(self):
-        x = random.randint(50, 350)
-        y = random.randint(50, 250)
-        d = random.randint(20, 100)
-        self.circles.append((x, y, d, d))
-        self.update()
+    def update(self):
+        x, y = random.randint(50, 300), random.randint(50, 300)
+        size = random.randint(20, 100)
+        color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        self.circles.append((x, y, size, color))
+        self.repaint()
 
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
+    app = QApplication(sys.argv)
+    window = CircleApp()
     window.show()
     sys.exit(app.exec())
